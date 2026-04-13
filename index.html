@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Regex Studio</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #667eea, #764ba2);
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+
+h1 {
+  margin-bottom: 10px;
+}
+
+.container {
+  background: white;
+  color: black;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 700px;
+  margin: auto;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+input {
+  padding: 10px;
+  margin: 5px;
+  width: 80%;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  padding: 10px 15px;
+  margin: 5px;
+  border: none;
+  border-radius: 8px;
+  background: #667eea;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #5a67d8;
+  transform: scale(1.05);
+}
+
+.box {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 10px;
+  background: #f3f3f3;
+}
+
+.tag {
+  display: inline-block;
+  padding: 6px 10px;
+  margin: 4px;
+  background: #667eea;
+  color: white;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+hr {
+  margin: 30px 0;
+}
+
+  </style>
+</head>
+
+<body>
+
+<h1>✨ Regex Studio</h1>
+<p>Visualize and test Regular Expressions easily</p>
+
+<div class="container">
+
+<!-- REGEX INPUT -->
+
+<input id="regex" placeholder="Enter regex (e.g. (a|b)*)">
+<br>
+
+<button onclick="add('*')">*</button> <button onclick="add('|')">|</button> <button onclick="add('(')">(</button> <button onclick="add(')')">)</button>
+
+<br>
+<button onclick="generate()">Generate Strings</button>
+
+<div class="box">
+  <h3>Generated Strings</h3>
+  <div id="output"></div>
+</div>
+
+<hr>
+
+<!-- STRING TEST -->
+
+<h2>Test a String</h2>
+<input id="testStr" placeholder="Enter string">
+<br>
+<button onclick="testString()">Test</button>
+<p id="testResult"></p>
+
+<hr>
+
+<!-- EQUIVALENCE -->
+
+<h2>Equivalence Checker</h2>
+<input id="r1" placeholder="Regex 1">
+<input id="r2" placeholder="Regex 2">
+<br>
+<button onclick="check()">Check</button>
+
+<div class="box">
+  <h3 id="result"></h3>
+</div>
+
+</div>
+
+<script>
+function add(symbol) {
+  document.getElementById("regex").value += symbol;
+}
+
+function generateStrings(regex, maxLen = 4) {
+  let results = [];
+  let chars = ["a", "b", "0", "1"];
+
+  function gen(str) {
+    if (str.length > maxLen) return;
+
+    try {
+      let re = new RegExp("^" + regex + "$");
+      if (re.test(str)) results.push(str || "ε");
+    } catch (e) {
+      return;
+    }
+
+    for (let ch of chars) {
+      gen(str + ch);
+    }
+  }
+
+  gen("");
+  return [...new Set(results)];
+}
+
+function generate() {
+  let regex = document.getElementById("regex").value;
+  let output = document.getElementById("output");
+  output.innerHTML = "";
+
+  try {
+    let strings = generateStrings(regex);
+
+    strings.forEach(s => {
+      let span = document.createElement("span");
+      span.className = "tag";
+      span.innerText = s;
+      output.appendChild(span);
+    });
+
+  } catch (e) {
+    alert("Invalid Regex!");
+  }
+}
+
+function testString() {
+  let regex = document.getElementById("regex").value;
+  let str = document.getElementById("testStr").value;
+
+  try {
+    let re = new RegExp("^" + regex + "$");
+    let res = re.test(str);
+
+    document.getElementById("testResult").innerText =
+      res ? "Accepted ✅" : "Rejected ❌";
+
+  } catch (e) {
+    document.getElementById("testResult").innerText = "Invalid Regex";
+  }
+}
+
+function check() {
+  let r1 = document.getElementById("r1").value;
+  let r2 = document.getElementById("r2").value;
+
+  let s1 = new Set(generateStrings(r1));
+  let s2 = new Set(generateStrings(r2));
+
+  let equal = s1.size === s2.size && [...s1].every(x => s2.has(x));
+
+  document.getElementById("result").innerText =
+    equal ? "Equivalent ✅" : "Not Equivalent ❌";
+}
+</script>
+
+</body>
+</html>
