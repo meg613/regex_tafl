@@ -16,8 +16,9 @@ To design a web application that helps users understand the behavior of regular 
 - JavaScript
 
 **How to run**
+
 1)Download the project
-  Open index.html in any browser
+Open index.html in any browser
 
 2) Use the deployed link :
 https://meg613.github.io/regex_tafl/
